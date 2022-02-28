@@ -155,11 +155,11 @@ class TNT(nn.Module):
         num_patches_w = w // patch_size
         n = num_patches_w * num_patches_h
 
-        pixels = self.to_pixel_tokens(x)
-        patches = repeat(self.patch_tokens[:(n + 1)], 'n d -> b n d', b = b)
+        pixels_ = self.to_pixel_tokens(x)
+        patches_ = repeat(self.patch_tokens[:(n + 1)], 'n d -> b n d', b = b)
 
-        patches += rearrange(self.patch_pos_emb[:(n + 1)], 'n d -> () n d')
-        pixels += rearrange(self.pixel_pos_emb, 'n d -> () n d')
+        patches = rearrange(self.patch_pos_emb[:(n + 1)], 'n d -> () n d') + patches_
+        pixels = rearrange(self.pixel_pos_emb, 'n d -> () n d') + pixels_
 
         for pixel_attn, pixel_ff, pixel_to_patch_residual, patch_attn, patch_ff in self.layers:
 
